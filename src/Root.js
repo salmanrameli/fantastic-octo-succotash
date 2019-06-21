@@ -8,95 +8,139 @@ class Root extends React.Component {
         super(props)
 
         this.state = {
-            url: '',
-            password: ''
+            winWidth: '',
+            winHeight: '',
+            windowHasFrame: '',
+            windowIsResizable: ''
         }
 
-        this.handleUrlSubmit = this.handleUrlSubmit.bind(this)
-        this.handleUrlEntered = this.handleUrlEntered.bind(this)
-        this.handlePasswordSubmit = this.handlePasswordSubmit.bind(this)
-        this.handlePasswordEntered = this.handlePasswordEntered.bind(this)
+        this.handleWindowSizeSetting = this.handleWindowSizeSetting.bind(this)
+        this.handleWindowResizableChange = this.handleWindowResizableChange.bind(this)
+        this.handleWindowHasFrameChange = this.handleWindowHasFrameChange.bind(this)
     }
 
     componentDidMount() {
-        let url = store.get('url')
-        let password = store.get('password')
-
+        let winWidth = store.get('winWidth')
+        let winHeight = store.get('winHeight')
+        let windowHasFrame = store.get('windowHasFrame')
+        let windowIsResizable = store.get('windowIsResizable')
+        
         this.setState({
-            url: url,
-            password: password
+            winWidth: winWidth,
+            winHeight: winHeight,
         })
-    }
 
-    handleUrlEntered = (e) => {
-		this.setState({
-			url: e.target.value
-		})
-    }
-    
-    handlePasswordEntered = (e) => {
-		this.setState({
-			password: e.target.value
-		})
-	}
-
-    handleUrlSubmit(e) {
-        let url = e.target.piholeAdminUrl.value
-        let http = "http://"
-        let final_url
-
-        if(url.substring(0, 7) !== "http://") {
-            if(url.substring(0, 8) === "https://") {
-                let url_substring = url.substr(8)
-
-                final_url = http.concat(url_substring)
-
-                store.set('url', final_url)
-            } else {
-                final_url = http.concat(url)
-
-                store.set('url', final_url)
-            }
+        if(windowHasFrame !== undefined) {
+            this.setState({
+                windowHasFrame: String(windowHasFrame)
+            })
         } else {
-            final_url = http.concat(url)
+            this.setState({
+                windowHasFrame: true
+            })
+        }
 
-            store.set('url', final_url)
+        if(windowIsResizable !== undefined) {
+            this.setState({
+                windowIsResizable: String(windowIsResizable)
+            })
+        } else {
+            this.setState({
+                windowIsResizable: true
+            })
         }
     }
 
-    handlePasswordSubmit(e) {
-        let password = e.target.piholePassword.value
+    handleWindowSizeSetting(e) {
+        let winWidth = e.target.width.value
+        let winHeight = e.target.height.value
 
-        store.set('password', password)
+        store.set('winWidth', winWidth)
+        store.set('winHeight', winHeight)
+    }
+
+    handleWindowHasFrameChange(e) {
+        let val = e.target.value
+
+        this.setState({
+            windowHasFrame: val
+        })
+
+        store.set('windowHasFrame', val)
+    }
+
+    handleWindowResizableChange(e) {
+        let val = e.target.value
+
+        this.setState({
+            windowIsResizable: val
+        })
+
+        store.set('windowIsResizable', val)
     }
 
     render() {
         return(
-            <div className="col-md-12">
-                <div className="pb-2 mt-4 mb-2">
-                    <h1>Setting</h1>
+            <div className="row">
+                <div className="col-md-12">
+                    <div className="pb-2 mt-4 mb-2">
+                        <h1>Setting</h1>
+                    </div>
+                    <div className="card">
+                        <div className="card-body">
+                            <form id="windowSizeSetting" onSubmit={this.handleWindowSizeSetting}>
+                                <div className="form-row">
+                                    <div className="form-group col-md-6">
+                                        <label className="form-label" htmlFor="width">Window Width:</label>
+                                        <input className="form-control form-control-lg" type="text" name="width" placeholder={this.state.winWidth} />
+                                    </div>
+                                    <div className="form-group col-md-6">
+                                        <label className="form-label" htmlFor="height">Window Height:</label>
+                                        <input className="form-control form-control-lg" type="text" name="height" placeholder={this.state.winHeight} />
+                                    </div>
+                                    <button className="btn btn-success" type="submit"><i className="fa fa-bookmark"></i> Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <br></br>
                 </div>
-                <div className="card">
-					<div className="card-body">
-						<form id="piholeAdminUrl" onSubmit={this.handleUrlSubmit}>
-							<div className="form-group">
-                                <label className="form-label" htmlFor="piholeAdminUrl">Pi-Hole Admin URL:</label>
-                                <input className="form-control form-control-lg" type="text" name="piholeAdminUrl" placeholder={this.state.url} onChange={e => this.handleUrlEntered(e)} />
-							</div>
-                            <button className="btn btn-success" type="submit"><i className="fa fa-bookmark"></i> Save URL</button>
-						</form>
-					</div>
-				</div>
-                <br></br>
-                <div className="card">
-                    <div className="card-body">
-                        <form id="piholePassword" onSubmit={this.handlePasswordSubmit}>
-                            <div className="form-group">
-                                <label className="form-label" htmlFor="piholePassword">Pi-Hole Password:</label>
-                                <input className="form-control form-control-lg" type="text" name="piholePassword" value={this.state.password} onChange={e => this.handlePasswordEntered(e)} />
-                            </div>
-                            <button className="btn btn-success" type="submit"><i className="fa fa-bookmark"></i> Save Password</button>
-                        </form>
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-body">
+                            <form id="windowFrameSetting">
+                                <label className="form-label" htmlFor="width">Set Window has Frame</label>
+                                <br></br>
+                                <div className="form-check form-check-inline">
+                                    <input className="form-check-input" type="radio" name="windowFrame" id="windowFrameTrue" value="true" checked={this.state.windowHasFrame === 'true'} onChange={this.handleWindowHasFrameChange} />
+                                    <label className="form-check-label" htmlFor="windowFrameTrue">Yes</label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input className="form-check-input" type="radio" name="windowFrame" id="windowFrameFalse" value="false" checked={this.state.windowHasFrame === 'false'} onChange={this.handleWindowHasFrameChange} />
+                                    <label className="form-check-label" htmlFor="windowFrameFalse">No</label>
+                                </div>
+                                <br></br><br></br>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-body">
+                            <form id="windowResizableSetting">
+                                <label className="form-label" htmlFor="width">Set Window is Resizable</label>
+                                <br></br>
+                                <div className="form-check form-check-inline">
+                                    <input className="form-check-input" type="radio" name="windowResizable" id="windowResizableTrue" value="true" checked={this.state.windowIsResizable === 'true'} onChange={this.handleWindowResizableChange} />
+                                    <label className="form-check-label" htmlFor="windowResizableTrue">Yes</label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input className="form-check-input" type="radio" name="windowResizable" id="windowResizableFalse" value="false" checked={this.state.windowIsResizable === 'false'} onChange={this.handleWindowResizableChange} />
+                                    <label className="form-check-label" htmlFor="windowResizableFalse">No</label>
+                                </div>
+                                <br></br><br></br>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

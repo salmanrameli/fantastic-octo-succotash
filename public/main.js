@@ -10,41 +10,53 @@ const store = new Store();
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function loadPage() {
-  // store.delete('url')
-  url = store.get('url')
-
-  if(url === undefined) {
-    mainWindow.loadURL(
-      isDev ? "http://localhost:3000" : `file://${path.join(__dirname, '../build/index.html')}`
-    )
-  } else {
-    mainWindow.loadURL(url)
-  }
+function stringToBool(val) {
+  return (val + '').toLowerCase() === 'true';
 }
 
-function createWindow () {
+function initWindow() {
+  let winWidth = 1280
+  let winHeight = 800
+  let windowIsResizable
+  let windowHasFrame = true
+
+  if(store.get('winWidth') !== undefined && store.get('winHeight') !== undefined) {
+    winWidth = store.get('winWidth')
+    winHeight = store.get('winHeight')
+  }
+
+  if(store.get('windowIsResizable') === undefined) {
+    windowIsResizable = true
+  } else {
+    windowIsResizable = store.get('windowIsResizable')
+  }
+
+  if(store.get('windowHasFrame') !== undefined) {
+    windowHasFrame = store.get('windowHasFrame')
+  }
+
+  createWindow(winWidth, winHeight, windowIsResizable, windowHasFrame)
+}
+
+function createWindow (winWidth, winHeight, windowIsResizable, windowHasFrame) {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1200, 
-		height: 800,
+    width: parseInt(winWidth, 10),
+    height: parseInt(winHeight, 10),
+    resizable: stringToBool(windowIsResizable),
+    titleBarStyle: stringToBool(windowHasFrame) ? "default" : "hidden",
     webPreferences: {
       nodeIntegration: false,
       preload: path.resolve(`${__dirname}/renderer.js`),
     }
   })
 
-  mainWindow.setResizable(false)
+  mainWindow.center()
 
-  loadPage()
-
-  // let menubar = require('./src/Menubar').template
+  mainWindow.loadURL("https://www.youtube.com")
 
   const menu = Menu.buildFromTemplate(menubar)
   Menu.setApplicationMenu(menu)
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -58,7 +70,7 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', initWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -70,7 +82,7 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow()
+  if (mainWindow === null) initWindow()
 })
 
 // In this file you can include the rest of your app's specific main process
@@ -79,9 +91,9 @@ let menubar = [
   ...(process.platform === 'darwin' ? [{
     label: app.name,
     submenu: [
-      { role: 'about' },      
+      { role: 'about' },
       { type: 'separator' },
-      { label: 'Preferences', click() { mainWindow.loadURL(isDev ? "http://localhost:3000" : `file://${path.join(__dirname, '../build/index.html')}`) } },
+      { label: 'Preferences', click() { mainWindow.loadURL(isDev ? "http://localhost:3000" : `file://${path.join(__dirname, '../build/index.html')}`) } },  
       { type: 'separator' },
       { role: 'services' },
       { type: 'separator' },
@@ -95,7 +107,7 @@ let menubar = [
   {
     label: 'File',
     submenu: [
-      { label: 'View Dashboard', click() { loadPage() } },
+      { label: 'View Youtube', click() { mainWindow.loadURL("https://www.youtube.com") } },
       { type: 'separator' },
       process.platform === 'darwin' ? 
       { role: 'close' } : { role: 'quit' }
@@ -160,14 +172,5 @@ let menubar = [
   },
   {
     role: 'help',
-    submenu: [
-      {
-        label: 'Learn More',
-        click: async () => {
-          const { shell } = require('electron')
-          await shell.openExternal('https://electronjs.org')
-        }
-      }
-    ]
   }
 ]

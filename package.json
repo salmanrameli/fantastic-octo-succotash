@@ -1,7 +1,7 @@
 {
-  "name": "electron-webview",
-  "description": "Electron wrapper for Pi-Hole dasboard",
-  "version": "0.1.0",
+  "name": "YouTube",
+  "description": "Electron wrapper for YouTube",
+  "version": "1.0.0",
   "private": true,
   "homepage": "./",
   "main": "public/main.js",
@@ -10,8 +10,8 @@
     "email": "salmanrameli@gmail.com"
   },
   "build": {
-    "appId": "com.salmanrameli.electron-pihole",
-    "productName": "Electron Pi-Hole",
+    "appId": "com.salmanrameli.youtube",
+    "productName": "YouTube",
     "copyright": "Copyright © 2019 ${author}",
     "asar": false,
     "extends": null,
@@ -29,16 +29,12 @@
       "output": "dist"
     },
     "mac": {
-			"icon": "assets/icon.icns",
-			"type": "distribution",
-			"target": [
-				"dmg"
-			],
-			"category": "public.app-category.utilities"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "icon": "assets/Youtube.icns",
+      "type": "distribution",
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.utilities"
     }
   },
   "dependencies": {
