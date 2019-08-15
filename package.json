@@ -35,6 +35,15 @@
         "dmg"
       ],
       "category": "public.app-category.utilities"
+    },
+    "linux": {
+      "icon": "assets/Youtube.icns",
+      "target": [
+        "deb",
+        "AppImage"
+      ],
+      "executableName": "YouTube",
+      "synopsis": "Electron wrapper for YouTube"
     }
   },
   "dependencies": {

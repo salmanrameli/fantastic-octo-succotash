@@ -48,7 +48,8 @@ function createWindow (winWidth, winHeight, windowIsResizable, windowHasFrame) {
     webPreferences: {
       nodeIntegration: false,
       preload: path.resolve(`${__dirname}/renderer.js`),
-    }
+    },
+    icon: path.resolve(`${__dirname}/../assets/Youtube.png`)
   })
 
   mainWindow.center()
